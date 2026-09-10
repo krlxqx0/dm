@@ -1,0 +1,229 @@
+/* ===========================================================
+   Письмо — envelope-opening scene
+   Подключается вместе с main.css (использует его переменные)
+   =========================================================== */
+
+body {
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 2.5rem 1.2rem;
+}
+
+.back-link {
+	position: fixed;
+	top: 1.3rem;
+	left: 1.3rem;
+	font-family: var(--font-body);
+	font-size: 0.9rem;
+	text-decoration: none;
+	color: var(--ink-soft);
+	z-index: 10;
+	transition: color 0.2s ease;
+}
+
+.back-link:hover,
+.back-link:focus-visible {
+	color: var(--plum);
+}
+
+.scene {
+	width: min(420px, 88vw);
+	text-align: center;
+}
+
+.scene h2 {
+	font-family: var(--font-display);
+	font-style: italic;
+	font-weight: 600;
+	font-size: clamp(1.6rem, 5vw, 2rem);
+	color: var(--plum-deep);
+	margin: 0 0 1.8rem;
+}
+
+/* ---------------------------------------------------------
+   Конверт
+   --------------------------------------------------------- */
+
+.envelope-box {
+	position: relative;
+	width: 100%;
+	aspect-ratio: 3 / 2;
+	cursor: pointer;
+	user-select: none;
+	margin: 0 auto;
+	perspective: 1000px;
+}
+
+.env-back {
+	position: absolute;
+	inset: 0;
+	background: var(--paper);
+	border: 1px solid var(--line);
+	box-shadow: 0 18px 32px -18px var(--shadow);
+	transition:
+		transform 0.3s ease,
+		box-shadow 0.3s ease;
+}
+
+.envelope-box:not(.is-open):hover .env-back,
+.envelope-box:not(.is-open):focus-visible .env-back {
+	transform: translateY(-4px);
+	box-shadow: 0 24px 38px -16px var(--shadow);
+}
+
+.env-letter {
+	position: absolute;
+	left: 6%;
+	right: 6%;
+	bottom: 8%;
+	top: 10%;
+	background: #fffdf9;
+	border: 1px solid var(--line);
+	transform: translateY(0);
+	transition: transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+	z-index: 2;
+	padding: 1.1rem;
+	overflow: hidden;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.env-letter p {
+	font-family: var(--font-hand);
+	font-size: 1.1rem;
+	color: var(--ink-soft);
+	margin: 0;
+}
+
+.env-flap {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	height: 55%;
+	background: linear-gradient(135deg, var(--rose-soft), var(--rose));
+	clip-path: polygon(0 0, 100% 0, 50% 100%);
+	transform-origin: top center;
+	transition: transform 0.6s ease;
+	z-index: 3;
+	display: flex;
+	align-items: flex-start;
+	justify-content: center;
+}
+
+.env-flap .seal {
+	margin-top: 32%;
+	width: 42px;
+	height: 42px;
+	border-radius: 50%;
+	background: radial-gradient(
+		circle at 35% 30%,
+		var(--gold-soft),
+		var(--gold) 70%
+	);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--paper);
+	box-shadow: 0 4px 10px rgba(70, 33, 63, 0.25);
+	transition: transform 0.3s ease;
+}
+
+.envelope-box.is-open .env-flap {
+	transform: rotateX(180deg);
+}
+
+.envelope-box.is-open .env-letter {
+	transform: translateY(-40%);
+}
+
+.envelope-box.is-open .env-back {
+	transform: none;
+	box-shadow: 0 18px 32px -18px var(--shadow);
+}
+
+.hint {
+	margin-top: 1.4rem;
+	min-height: 1.6rem;
+	font-family: var(--font-hand);
+	font-size: 1.15rem;
+	color: var(--rose);
+	transition: opacity 0.3s ease;
+}
+
+/* ---------------------------------------------------------
+   Развёрнутое письмо — плавное появление
+   --------------------------------------------------------- */
+
+.full-letter {
+	text-align: left;
+	background: var(--paper);
+	border: 1px solid var(--line);
+	padding: 0 1.6rem;
+	box-shadow: 0 18px 32px -20px var(--shadow);
+	max-height: 0;
+	opacity: 0;
+	margin-top: 0;
+	overflow: hidden;
+	transition:
+		max-height 0.8s ease,
+		opacity 0.6s ease 0.15s,
+		margin-top 0.6s ease,
+		padding 0.6s ease;
+}
+
+.full-letter.is-shown {
+	max-height: min(60vh, 640px);
+	opacity: 1;
+	margin-top: 2rem;
+	padding: 1.8rem 1.6rem;
+	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
+	scrollbar-width: thin;
+	scrollbar-color: var(--rose-soft) transparent;
+}
+
+/* аккуратный скроллбар в тон дизайну, вместо системного */
+.full-letter.is-shown::-webkit-scrollbar {
+	width: 6px;
+}
+.full-letter.is-shown::-webkit-scrollbar-track {
+	background: transparent;
+}
+.full-letter.is-shown::-webkit-scrollbar-thumb {
+	background: var(--rose-soft);
+	border-radius: 3px;
+}
+
+.full-letter p {
+	font-family: var(--font-display);
+	font-style: italic;
+	font-size: 1.2rem;
+	line-height: 1.7;
+	color: var(--ink);
+	margin: 0 0 1rem;
+}
+
+.full-letter p:last-child {
+	margin-bottom: 0;
+}
+
+.signature {
+	text-align: right;
+	font-family: var(--font-hand);
+	font-size: 1.6rem;
+	color: var(--plum);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.env-flap,
+	.env-letter,
+	.env-back,
+	.full-letter {
+		transition: none;
+	}
+}
